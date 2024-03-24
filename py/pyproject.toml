@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "resai"
+version = "0.1.0"
+description = ""
+authors = ["rycharlind <rycharlind@gmail.com>"]
+readme = "README.md"
+packages = [{include = "resai"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.12"
+openai = "^0.27.2"
+fastapi = {extras = ["all"], version = "^0.95.0"}
+python-dotenv = "^1.0.0"
+langchain = "^0.0.333"
+autopep8 = "^2.0.2"
+pypdf = "^3.7.0"
+azure-identity = "^1.13.0b3"
+azure-storage-blob = "^12.15.0"
+psycopg2-binary = "^2.9.6"
+pdfminer = "^20191125"
+ipykernel = "^6.23.1"
+pymupdf = "^1.22.3"
+sentence-transformers = "^2.2.2"
+setuptools = "^68.0.0"
+aioboto3 = "^10.4.0"
+aiobotocore = "^2.4.2"
+boto3 = "^1.24.59"
+bs4 = "^0.0.1"
+langchain-community = "^0.0.12"
+pgvector = "^0.2.4"
+unstructured = {extras = ["pdf"], version = "^0.12.0"}
+markdown = "^3.5.2"
+pypdf2 = "^3.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

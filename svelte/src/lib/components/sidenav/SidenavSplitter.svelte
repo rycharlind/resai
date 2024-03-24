@@ -1,0 +1,1 @@
+<div class="h-px dark:bg-zinc-700 bg-zinc-200 my-2"></div>

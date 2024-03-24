@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  ResaiBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: resai2
+
+  ResaiSearchFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: resaiSearchFunction
+      Runtime: python3.11
+      Handler: main.handler
+      Code:
+        ZipFile: |
+          import json
+
+          def handler(event, context):
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from the Resai function!')
+              }
+      Role: !GetAtt ResaiFunctionRole.Arn
+
+  ResaiFunctionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: resaiFunctionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: resaiFunctionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+
+    Metadata:
+      AWS::CloudFormation::Stack:
+        Capabilities: [CAPABILITY_NAMED_IAM]
+
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html
+  ResaiAPI:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      Name: ResaiAPI
+
+  ResaiAPIRootResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      RestApiId: !Ref ResaiAPI
+      ParentId: !GetAtt ResaiAPI.RootResourceId
+      PathPart: '/'
+  
+  ResaiAPIMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      RestApiId: !Ref ResaiAPI
+      ResourceId: !Ref ResaiAPIRootResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ResaiSearchFunction.Arn}/invocations
+
+  ResaiDeployment:
+    Type: 'AWS::ApiGateway::Deployment'
+    DependsOn: ResaiAPIMethod
+    Properties:
+      RestApiId: !Ref ResaiAPI
+      StageName: Prod
+
+Outputs:
+  ResaiBucketName:
+    Value: !Ref ResaiBucket
+  ResaiAPIEndpoint:
+    Value: !Sub "https://${ResaiAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

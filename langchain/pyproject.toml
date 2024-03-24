@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "langchain-resai"
+version = "0.1.0"
+description = ""
+authors = ["Ryan Lindbeck <rycharlind@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "app" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.23.2"
+langserve = {extras = ["server"], version = ">=0.0.30"}
+pydantic = "<2"
+python-dotenv = "^1.0.0"
+openai = "^1.7.2"
+sentence-transformers = "^2.2.2"
+langchain-openai = "^0.0.2.post1"
+psycopg2 = "^2.9.9"
+pgvector = "^0.2.4"
+
+
+[tool.poetry.group.dev.dependencies]
+langchain-cli = ">=0.0.15"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
